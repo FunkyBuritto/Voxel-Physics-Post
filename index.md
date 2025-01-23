@@ -1,5 +1,5 @@
 ---
-title: /
+title: Voxel Physics
 layout: home
 permalink: /
 ---
@@ -8,20 +8,20 @@ permalink: /
 *by Milan Bonten*
 
 - [Introduction](./#introduction)
-- Voxel Data
-- Collision detection
-    - Early out
-    - Shape Overlap
-    - Voxel Transformation
-- Contact generation
-    - Basic contact
-    - Normal Lookup
-    - Voxel types
+- [Voxel Data](./#voxel-data)
+- [Collision detection](./#collision_detection)
+    - [Early out](./#early-out)
+    - [Shape Overlap](./#shape-overlap)
+    - [Voxel Transformation](./#voxel-transformation)
+- [Contact generation](./#contact-generation)
+    - [Basic contact](./#basic-contact)
+    - [Normal Lookup](./#normal-lookup)
+    - [Voxel types](./#voxel-types)
 - [Contact solving](./#contact-solving)
-    - Rigidbody properties
-    - Velocity Solving
-    - Friction
-    - Position Solving
+    - [Rigidbody properties](./#rigidbody-properties)
+    - [Velocity Solving](./#velocity-solving)
+    - [Friction](./#friction)
+    - [Position Solving](./#position-solving)
 
 
 ## Introduction
@@ -38,7 +38,7 @@ The structure of the voxel physics loop looks like this (in order):
 Doing this gave me the following result:
 
 <video width="100%" controls>
-  <source src="../assets/media/final_product_demo.mp4" type="video/mp4">
+  <source src="./media/final_product_demo.mp4" type="video/mp4">
 </video>
 
 keep in mind that in all my code snipets I use a game engine provided by school, this contains rendering, transforms and ECS. 
@@ -61,7 +61,7 @@ public:
 
 |||
 |-|-|
-|The voxels them self have a voxel type that indicate the type of geometry the voxel is. This geometry type is used to reduce the number of contacts and collision checks. It goes hand in hand with the `normal_index`. Every voxel can have a certain number of normals based on its surrounding voxels. Saving both of these values can be stored in a single byte in C++, as I have done in my voxel class. | ![normal_example](../assets/media/normal_example.png) |
+|The voxels them self have a voxel type that indicate the type of geometry the voxel is. This geometry type is used to reduce the number of contacts and collision checks. It goes hand in hand with the `normal_index`. Every voxel can have a certain number of normals based on its surrounding voxels. Saving both of these values can be stored in a single byte in C++, as I have done in my voxel class. | ![normal_example](./media/normal_example.png) |
 |||
 
 ```cpp
@@ -92,7 +92,7 @@ The very first step of the collision detection is looping over all rigidbodies w
 
 |||
 |-|-|
-| The idea of SAT is that you check if there is any axis that you are not overlapping on. The axes that you are checking are the normals of the faces, and the cross products between the normals. In our case, we only have 3 normals because the face on the other side of the box has the same axis. SAT says that if there is any axis that is not overlapping we know we can't be colliding. |![sat_example](../assets/media/SAT_example.png) |
+| The idea of SAT is that you check if there is any axis that you are not overlapping on. The axes that you are checking are the normals of the faces, and the cross products between the normals. In our case, we only have 3 normals because the face on the other side of the box has the same axis. SAT says that if there is any axis that is not overlapping we know we can't be colliding. |![sat_example](./media/SAT_example.png) |
 |||
 
 `vert_a` and `vert_b` contain the vertices of their OBB in world space. `axes_a` and `axes_b` contain 3 vectors containing the normals of their OBB in world space. If `sat_early_out` returns true, we know we can early out, so we don't need to continue with collision detection.
@@ -165,7 +165,7 @@ We want to get the area of the shape that is overlapping, and we want to get the
 
 |||
 |-|-|
-| We get the world vertices of object b, and transform them in the local space of object a. Then we want to get the minimum and maximum values in all axis to create an axis aligned `t_min` and `t_max` of the shape. After this we clamp the values to the bounds of object a and convert it to local voxel space to get the area that we want to check. |![overlap_example](../assets/media/overlap_example.png)|
+| We get the world vertices of object b, and transform them in the local space of object a. Then we want to get the minimum and maximum values in all axis to create an axis aligned `t_min` and `t_max` of the shape. After this we clamp the values to the bounds of object a and convert it to local voxel space to get the area that we want to check. |![overlap_example](./media/overlap_example.png)|
 |||
 
 ```cpp
@@ -213,7 +213,7 @@ for (size_t z_a = min.z; z_a < max.z; z_a++)
 ### Voxel Transformation
 The actual collision detection is a squared distance check. But again, we don't want to do a squared distance check for all the solid voxels in the other shape, we could do another overlap on the other shape. But it makes more sense to just get the current voxel and transform it in to the local voxel space of the other object and check the surrounding voxels.
 
-![overlap_example](../assets/media/transformation_example.png)
+![overlap_example](./media/transformation_example.png)
 
 ```cpp
 // Transform the voxel from local voxel space A to world space
@@ -287,13 +287,13 @@ struct ContactPoint
 
 We fill up are contacts based on the squared distance check values, so we treat our voxels as spheres.
 
-![contact_example](../assets/media/contact_example.png)
+![contact_example](./media/contact_example.png)
 
 ### Normal lookup
 
 The reason we need the normal lookup is for the following example. When a voxel is past a voxel, it will generate a normal that points the wrong way. 
 
-![contact_wrong_example](../assets/media/contact_wrong_example.png)
+![contact_wrong_example](./media/contact_wrong_example.png)
 
 So to fix this we store the local normal of every voxel. We calculate these normals when we read the voxel data by checking the surrounding voxels to see what sides are not solid or outside of the range. Note, some voxels can't have a lookup normal.
 
