@@ -61,7 +61,7 @@ public:
 
 |||
 |-|-|
-|The voxels them self have a voxel type that indicate the type of geometry the voxel is. This geometry type is used to reduce the number of contacts and collision checks. It goes hand in hand with the `normal_index`. Every voxel can have a certain number of normals based on its surrounding voxels. Saving both of these values can be stored in a single byte in C++, as I have done in my voxel class. | ![normal_example](./media/normal_example.png) |
+|The voxels themselves have a voxel type that indicate the type of geometry the voxel is. This geometry type is used to reduce the number of contacts and collision checks. It goes hand in hand with the `normal_index`. Every voxel can have a certain number of normals based on its surrounding voxels. Saving both of these values can be stored in a single byte in C++, as I have done in my voxel class. | ![normal_example](./media/normal_example.png) |
 |||
 
 ```cpp
@@ -92,7 +92,7 @@ The very first step of the collision detection is looping over all rigidbodies w
 
 |||
 |-|-|
-| The idea of SAT is that you check if there is any axis that you are not overlapping on. The axes that you are checking are the normals of the faces, and the cross products between the normals. In our case, we only have 3 normals because the face on the other side of the box has the same axis. SAT says that if there is any axis that is not overlapping we know we can't be colliding. |![sat_example](./media/SAT_example.png) |
+| The idea of SAT is that you check if there is any axis that you are not overlapping on. The axes that you are checking are the normals of the faces, and the cross products between the normals. In our case, we only have 3 normals because the face on the other side of the box has the same axis. SAT says that if there is any axis that is not overlapping we know there can't be a collision. |![sat_example](./media/SAT_example.png) |
 |||
 
 `vert_a` and `vert_b` contain the vertices of their OBB in world space. `axes_a` and `axes_b` contain 3 vectors containing the normals of their OBB in world space. If `sat_early_out` returns true, we know we can early out, so we don't need to continue with collision detection.
@@ -285,7 +285,7 @@ struct ContactPoint
 };
 ```
 
-We fill up are contacts based on the squared distance check values, so we treat our voxels as spheres.
+We fill up the contacts based on the squared distance check values, so we treat our voxels as spheres.
 
 ![contact_example](./media/contact_example.png)
 
@@ -554,7 +554,7 @@ The position solving is based on steering behaviour. We have a few parameters th
 ```cpp
 const float steering_constant = 0.01f;
 const float max_correction = -VOXEL_SIZE_HALF;
-const float slop = VOXEL_SIZE_SQ;
+const float slop = VOXEL_SIZE_SQR;
 ```
 
 To get the actual impulse value we do the following:
